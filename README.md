@@ -28,6 +28,7 @@ LoggerFactory
 - Convention based static factory with familiar getLogger methods
 - Factory contains a static field controlling the date format.  Override as desired.
 - Factory also contains a static boolean field controlling output of the logger name.  Override as desired.  On by default.
+- Factory contains a static setter to set the json attribute for the timestamp. Default is "@timestamp".
 - Default date format: yyyy-MM-dd HH:mm:ss.SSSZ
 - Example output:
 ````
@@ -40,7 +41,7 @@ Default fields
 - thread_name
 - class
 - logger_name (can be toggled on/off above)
-- @timestamp (format set above)
+- @timestamp (format and name set above)
 
 Conventions
 ===========

@@ -18,58 +18,58 @@
 
 package com.savoirtech.logging.slf4j.json.logger;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
- * Verify all of the operations of the DebugLogger itself.  Note this intentionally does not
- * test any of AbstractJsonLogger.
+ * Verify all of the operations of the DebugLogger itself. Note this
+ * intentionally does not test any of AbstractJsonLogger.
  *
  * Created by art on 3/28/16.
  */
 public class DebugLoggerTest {
 
-  private DebugLogger logger;
+	private DebugLogger logger;
 
-  private String testMessage;
+	private String testMessage;
 
-  private org.slf4j.Logger slf4jLogger;
+	private org.slf4j.Logger slf4jLogger;
 
-  private Gson gson;
+	private Gson gson;
 
-  @Before
-  public void setupTest() throws Exception {
-    this.testMessage = "x-test-formatted-message-x";
-    this.slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
-    this.gson = new GsonBuilder().disableHtmlEscaping().create();
+	@Before
+	public void setupTest() throws Exception {
+		this.testMessage = "x-test-formatted-message-x";
+		this.slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+		this.gson = new GsonBuilder().disableHtmlEscaping().create();
 
-    this.logger = new DebugLogger(slf4jLogger, null, gson, true) {
-      @Override
-      protected String formatMessage(String level) {
-        if (level.equals(DebugLogger.LOG_LEVEL)) {
-          return testMessage;
-        } else {
-          throw new RuntimeException("unexpected log level " + level);
-        }
-      }
-    };
-  }
+		this.logger = new DebugLogger(slf4jLogger, null, null, gson, true) {
+			@Override
+			protected String formatMessage(String level) {
+				if (level.equals(DebugLogger.LOG_LEVEL)) {
+					return testMessage;
+				} else {
+					throw new RuntimeException("unexpected log level " + level);
+				}
+			}
+		};
+	}
 
-  @Test
-  public void testLog() throws Exception {
-    this.logger.log();
+	@Test
+	public void testLog() throws Exception {
+		this.logger.log();
 
-    Mockito.verify(slf4jLogger).debug(this.testMessage);
-  }
+		Mockito.verify(slf4jLogger).debug(this.testMessage);
+	}
 
-  @Test
-  public void testToString() throws Exception {
-    assertEquals(this.testMessage, this.logger.toString());
-  }
+	@Test
+	public void testToString() throws Exception {
+		assertEquals(this.testMessage, this.logger.toString());
+	}
 }

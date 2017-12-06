@@ -18,12 +18,12 @@
 
 package com.savoirtech.logging.slf4j.json.logger;
 
+import static org.junit.Assert.assertTrue;
+
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Validate operation of the Logger.
@@ -32,106 +32,107 @@ import static org.junit.Assert.assertTrue;
  */
 public class LoggerTest {
 
-  private Logger logger;
+	private Logger logger;
 
-  private org.slf4j.Logger slf4jLogger;
-  private FastDateFormat formatter;
+	private org.slf4j.Logger slf4jLogger;
+	private String dateKey = "@timestamp";
+	private FastDateFormat formatter;
 
-  @Before
-  public void setupTest() throws Exception {
-    this.slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
-    this.formatter = Mockito.mock(FastDateFormat.class);
+	@Before
+	public void setupTest() throws Exception {
+		this.slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+		this.formatter = Mockito.mock(FastDateFormat.class);
 
-    this.logger = new Logger(slf4jLogger, formatter, true);
-  }
+		this.logger = new Logger(slf4jLogger, dateKey, formatter, true);
+	}
 
-  @Test
-  public void testTraceWhenEnabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isTraceEnabled()).thenReturn(true);
+	@Test
+	public void testTraceWhenEnabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isTraceEnabled()).thenReturn(true);
 
-    JsonLogger result = this.logger.trace();
+		JsonLogger result = this.logger.trace();
 
-    assertTrue(result instanceof TraceLogger);
-  }
+		assertTrue(result instanceof TraceLogger);
+	}
 
-  @Test
-  public void testTraceWhenDisabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isTraceEnabled()).thenReturn(false);
+	@Test
+	public void testTraceWhenDisabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isTraceEnabled()).thenReturn(false);
 
-    JsonLogger result = this.logger.trace();
+		JsonLogger result = this.logger.trace();
 
-    assertTrue(result instanceof NoopLogger);
-  }
+		assertTrue(result instanceof NoopLogger);
+	}
 
-  @Test
-  public void testDebugWhenEnabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isDebugEnabled()).thenReturn(true);
+	@Test
+	public void testDebugWhenEnabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isDebugEnabled()).thenReturn(true);
 
-    JsonLogger result = this.logger.debug();
+		JsonLogger result = this.logger.debug();
 
-    assertTrue(result instanceof DebugLogger);
-  }
+		assertTrue(result instanceof DebugLogger);
+	}
 
-  @Test
-  public void testDebugWhenDisabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isDebugEnabled()).thenReturn(false);
+	@Test
+	public void testDebugWhenDisabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isDebugEnabled()).thenReturn(false);
 
-    JsonLogger result = this.logger.debug();
+		JsonLogger result = this.logger.debug();
 
-    assertTrue(result instanceof NoopLogger);
-  }
+		assertTrue(result instanceof NoopLogger);
+	}
 
-  @Test
-  public void testInfoWhenEnabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isInfoEnabled()).thenReturn(true);
+	@Test
+	public void testInfoWhenEnabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isInfoEnabled()).thenReturn(true);
 
-    JsonLogger result = this.logger.info();
+		JsonLogger result = this.logger.info();
 
-    assertTrue(result instanceof InfoLogger);
-  }
+		assertTrue(result instanceof InfoLogger);
+	}
 
-  @Test
-  public void testInfoWhenDisabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isInfoEnabled()).thenReturn(false);
+	@Test
+	public void testInfoWhenDisabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isInfoEnabled()).thenReturn(false);
 
-    JsonLogger result = this.logger.info();
+		JsonLogger result = this.logger.info();
 
-    assertTrue(result instanceof NoopLogger);
-  }
+		assertTrue(result instanceof NoopLogger);
+	}
 
-  @Test
-  public void testWarnWhenEnabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isWarnEnabled()).thenReturn(true);
+	@Test
+	public void testWarnWhenEnabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isWarnEnabled()).thenReturn(true);
 
-    JsonLogger result = this.logger.warn();
+		JsonLogger result = this.logger.warn();
 
-    assertTrue(result instanceof WarnLogger);
-  }
+		assertTrue(result instanceof WarnLogger);
+	}
 
-  @Test
-  public void testWarnWhenDisabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isWarnEnabled()).thenReturn(false);
+	@Test
+	public void testWarnWhenDisabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isWarnEnabled()).thenReturn(false);
 
-    JsonLogger result = this.logger.warn();
+		JsonLogger result = this.logger.warn();
 
-    assertTrue(result instanceof NoopLogger);
-  }
+		assertTrue(result instanceof NoopLogger);
+	}
 
-  @Test
-  public void testErrorWhenEnabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isErrorEnabled()).thenReturn(true);
+	@Test
+	public void testErrorWhenEnabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isErrorEnabled()).thenReturn(true);
 
-    JsonLogger result = this.logger.error();
+		JsonLogger result = this.logger.error();
 
-    assertTrue(result instanceof ErrorLogger);
-  }
+		assertTrue(result instanceof ErrorLogger);
+	}
 
-  @Test
-  public void testErrorWhenDisabled() throws Exception {
-    Mockito.when(this.slf4jLogger.isErrorEnabled()).thenReturn(false);
+	@Test
+	public void testErrorWhenDisabled() throws Exception {
+		Mockito.when(this.slf4jLogger.isErrorEnabled()).thenReturn(false);
 
-    JsonLogger result = this.logger.error();
+		JsonLogger result = this.logger.error();
 
-    assertTrue(result instanceof NoopLogger);
-  }
+		assertTrue(result instanceof NoopLogger);
+	}
 }

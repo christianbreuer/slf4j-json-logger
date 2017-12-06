@@ -18,6 +18,18 @@
 
 package com.savoirtech.logging.slf4j.json.logger;
 
+import static org.mockito.Mockito.mock;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.MDC;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
@@ -26,168 +38,187 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import org.apache.commons.lang3.time.FastDateFormat;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.MDC;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import static org.mockito.Mockito.mock;
-
 public class AbstractJsonLoggerExceptionTest {
-  private AbstractJsonLogger logger;
+	private AbstractJsonLogger logger;
 
-  private org.slf4j.Logger slf4jLogger;
+	private org.slf4j.Logger slf4jLogger;
 
-  private Gson gson;
+	private Gson gson;
 
-  private String dateFormatString = "yyyy-MM-dd HH:mm:ss.SSSZ";
-  private FastDateFormat formatter;
+	private String dateFormatString = "yyyy-MM-dd HH:mm:ss.SSSZ";
+	private String dateKey = "@timestamp";
+	private FastDateFormat formatter;
 
-  private String logMessage;
+	private String logMessage;
 
-  @Before
-  public void setup() {
-    this.slf4jLogger = mock(org.slf4j.Logger.class);
+	@Before
+	public void setup() {
+		this.slf4jLogger = mock(org.slf4j.Logger.class);
 
-    // Use a special GSON configuration that throws exceptions at the right time for the test.
-    this.gson = new GsonBuilder().registerTypeAdapterFactory(new TestTypeAdapterFactory()).create();
+		// Use a special GSON configuration that throws exceptions at the right
+		// time for the test.
+		this.gson = new GsonBuilder()
+				.registerTypeAdapterFactory(new TestTypeAdapterFactory())
+				.create();
 
-    this.formatter = FastDateFormat.getInstance(dateFormatString);
+		this.formatter = FastDateFormat.getInstance(dateFormatString);
 
-    logger = new AbstractJsonLogger(slf4jLogger, formatter, gson, true) {
-      @Override
-      public void log() {
-        logMessage = formatMessage("INFO");
-      }
-    };
-  }
+		logger = new AbstractJsonLogger(slf4jLogger, dateKey, formatter, gson,
+				true) {
+			@Override
+			public void log() {
+				logMessage = formatMessage("INFO");
+			}
+		};
+	}
 
-  @After
-  public void cleanupTest() {
-    MDC.clear();
-  }
+	@After
+	public void cleanupTest() {
+		MDC.clear();
+	}
 
-  @Test
-  public void message() {
-    logger.message("message").log();
-    assert(logMessage.contains("\"message\":\"java.lang.RuntimeException: x-rt-exc-x"));
-  }
+	@Test
+	public void message() {
+		logger.message("message").log();
+		assert (logMessage.contains(
+				"\"message\":\"java.lang.RuntimeException: x-rt-exc-x"));
+	}
 
-  @Test
-  public void messageSupplier() {
-    logger.message(() -> {throw new RuntimeException("Some error!");}).log();
-    assert(logMessage.contains("\"message\":\"java.lang.RuntimeException: Some error!"));
-  }
+	@Test
+	public void messageSupplier() {
+		logger.message(() -> {
+			throw new RuntimeException("Some error!");
+		}).log();
+		assert (logMessage.contains(
+				"\"message\":\"java.lang.RuntimeException: Some error!"));
+	}
 
-  @Test
-  public void map() {
-    logger.map("someMap", new HashMap()).log();
-    assert(logMessage.contains("\"someMap\":\"java.lang.RuntimeException: x-rt-exc-x"));
-  }
+	@Test
+	public void map() {
+		logger.map("someMap", new HashMap()).log();
+		assert (logMessage.contains(
+				"\"someMap\":\"java.lang.RuntimeException: x-rt-exc-x"));
+	}
 
-  @Test
-  public void mapSupplier() {
-    logger.map("someMap", () -> {throw new RuntimeException("Some error!");}).log();
-    assert(logMessage.contains("\"someMap\":\"java.lang.RuntimeException: Some error!"));
-  }
+	@Test
+	public void mapSupplier() {
+		logger.map("someMap", () -> {
+			throw new RuntimeException("Some error!");
+		}).log();
+		assert (logMessage.contains(
+				"\"someMap\":\"java.lang.RuntimeException: Some error!"));
+	}
 
-  @Test
-  public void list() {
-    logger.list("someList", new LinkedList()).log();
-    assert(logMessage.contains("\"someList\":\"java.lang.RuntimeException: x-rt-exc-x"));
-  }
+	@Test
+	public void list() {
+		logger.list("someList", new LinkedList()).log();
+		assert (logMessage.contains(
+				"\"someList\":\"java.lang.RuntimeException: x-rt-exc-x"));
+	}
 
-  @Test
-  public void listSupplier() {
-    logger.list("someList", () -> {throw new RuntimeException("Some error!");}).log();
-    assert(logMessage.contains("\"someList\":\"java.lang.RuntimeException: Some error!"));
-  }
+	@Test
+	public void listSupplier() {
+		logger.list("someList", () -> {
+			throw new RuntimeException("Some error!");
+		}).log();
+		assert (logMessage.contains(
+				"\"someList\":\"java.lang.RuntimeException: Some error!"));
+	}
 
-  @Test
-  public void field() {
-    logger.field("key", "value").log();
-    assert(logMessage.contains("\"key\":\"java.lang.RuntimeException: x-rt-exc-x"));
-  }
+	@Test
+	public void field() {
+		logger.field("key", "value").log();
+		assert (logMessage
+				.contains("\"key\":\"java.lang.RuntimeException: x-rt-exc-x"));
+	}
 
-  @Test
-  public void fieldSupplier() {
-    logger.field("key", () -> {throw new RuntimeException("Some error!");}).log();
-    assert(logMessage.contains("\"key\":\"java.lang.RuntimeException: Some error!"));
-  }
+	@Test
+	public void fieldSupplier() {
+		logger.field("key", () -> {
+			throw new RuntimeException("Some error!");
+		}).log();
+		assert (logMessage
+				.contains("\"key\":\"java.lang.RuntimeException: Some error!"));
+	}
 
-  @Test
-  public void jsonSupplier() {
-    logger.json("json", () -> {throw new RuntimeException("Some error!");}).log();
-    assert(logMessage.contains("\"json\":\"java.lang.RuntimeException: Some error!"));
-  }
+	@Test
+	public void jsonSupplier() {
+		logger.json("json", () -> {
+			throw new RuntimeException("Some error!");
+		}).log();
+		assert (logMessage.contains(
+				"\"json\":\"java.lang.RuntimeException: Some error!"));
+	}
 
-  @Test
-  public void exception() {
-    logger.exception("exception", new Exception("x-exc-x")).log();
-    assert(logMessage.contains("\"exception\":\"java.lang.RuntimeException: x-rt-exc-x"));
-  }
+	@Test
+	public void exception() {
+		logger.exception("exception", new Exception("x-exc-x")).log();
+		assert (logMessage.contains(
+				"\"exception\":\"java.lang.RuntimeException: x-rt-exc-x"));
+	}
 
-  @Test
-  public void stack() {
-    logger.stack().log();
-    assert(logMessage.contains("\"stacktrace\":\"java.lang.RuntimeException: x-rt-exc-x"));
-  }
+	@Test
+	public void stack() {
+		logger.stack().log();
+		assert (logMessage.contains(
+				"\"stacktrace\":\"java.lang.RuntimeException: x-rt-exc-x"));
+	}
 
-  @Test
-  public void mdc() {
-    MDC.put("x-mdc-key-x", "x-mdc-value-x");
-    logger.log();
-    assert (logMessage.contains("\"mdc\":\"java.lang.RuntimeException: x-rt-exc-x"));
-  }
+	@Test
+	public void mdc() {
+		MDC.put("x-mdc-key-x", "x-mdc-value-x");
+		logger.log();
+		assert (logMessage
+				.contains("\"mdc\":\"java.lang.RuntimeException: x-rt-exc-x"));
+	}
 
+	// ========================================
+	// INTERNALS
+	// ========================================
 
-  //========================================
-  // INTERNALS
-  //========================================
+	/**
+	 * JSON type adapter factory that throws exceptions, or for Strings,
+	 * generates an adapter that throws exceptions at the right time for the
+	 * test.
+	 */
+	private class TestTypeAdapterFactory implements TypeAdapterFactory {
 
-  /**
-   * JSON type adapter factory that throws exceptions, or for Strings, generates an adapter that
-   * throws exceptions at the right time for the test.
-   */
-  private class TestTypeAdapterFactory implements TypeAdapterFactory {
+		@Override
+		public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+			if (type.getRawType().equals(String.class)) {
+				return (TypeAdapter<T>) new TestStringGsonTypeAdapter();
+			}
 
-    @Override
-    public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-      if (type.getRawType().equals(String.class)) {
-        return (TypeAdapter<T>) new TestStringGsonTypeAdapter();
-      }
+			throw new RuntimeException("x-rt-exc-x");
+		}
+	}
 
-      throw new RuntimeException("x-rt-exc-x");
-    }
-  }
+	/**
+	 * GSON adapter that throws exceptions at the right time for the test.
+	 */
+	private class TestStringGsonTypeAdapter extends TypeAdapter<String> {
 
-  /**
-   * GSON adapter that throws exceptions at the right time for the test.
-   */
-  private class TestStringGsonTypeAdapter extends TypeAdapter<String> {
+		@Override
+		public void write(JsonWriter out, String value) throws IOException {
+			//
+			// Do not throw exceptions when the AbstractJsonLogger (class under
+			// test) is formatting an
+			// exception from this test. Also do not throw an exception when the
+			// logger formats the
+			// "INFO" level.
+			//
+			if (value.startsWith("java.lang.RuntimeException:")
+					|| value.equals("INFO")
+					|| value.equals(Thread.currentThread().getName())) {
+				out.value(value);
+			} else {
+				throw new RuntimeException("x-rt-exc-x");
+			}
+		}
 
-    @Override
-    public void write(JsonWriter out, String value) throws IOException {
-      //
-      // Do not throw exceptions when the AbstractJsonLogger (class under test) is formatting an
-      //  exception from this test.  Also do not throw an exception when the logger formats the
-      //  "INFO" level.
-      //
-      if (value.startsWith("java.lang.RuntimeException:") || value.equals("INFO") || value.equals(Thread.currentThread().getName())) {
-        out.value(value);
-      } else {
-        throw new RuntimeException("x-rt-exc-x");
-      }
-    }
-
-    @Override
-    public String read(JsonReader in) throws IOException {
-      return null;
-    }
-  }
+		@Override
+		public String read(JsonReader in) throws IOException {
+			return null;
+		}
+	}
 }

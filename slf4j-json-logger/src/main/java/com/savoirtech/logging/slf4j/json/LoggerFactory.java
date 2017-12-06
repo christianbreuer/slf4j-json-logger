@@ -18,31 +18,37 @@
 
 package com.savoirtech.logging.slf4j.json;
 
-import com.savoirtech.logging.slf4j.json.logger.Logger;
-
 import org.apache.commons.lang3.time.FastDateFormat;
 
+import com.savoirtech.logging.slf4j.json.logger.Logger;
+
 public class LoggerFactory {
-  private static String dateFormatString = "yyyy-MM-dd HH:mm:ss.SSSZ";
-  private static FastDateFormat formatter = FastDateFormat.getInstance(dateFormatString);
-  private static boolean includeLoggerName = true;
+	private static String dateKey = "@timestamp";
+	private static String dateFormatString = "yyyy-MM-dd HH:mm:ss.SSSZ";
+	private static FastDateFormat formatter = FastDateFormat
+			.getInstance(dateFormatString);
+	private static boolean includeLoggerName = true;
 
-  public static Logger getLogger(String name) {
-    org.slf4j.Logger slf4jLogger = org.slf4j.LoggerFactory.getLogger(name);
-    return new Logger(slf4jLogger, formatter, includeLoggerName);
-  }
+	public static Logger getLogger(String name) {
+		org.slf4j.Logger slf4jLogger = org.slf4j.LoggerFactory.getLogger(name);
+		return new Logger(slf4jLogger, dateKey, formatter, includeLoggerName);
+	}
 
-  public static Logger getLogger(Class<?> clazz) {
-    org.slf4j.Logger slf4jLogger = org.slf4j.LoggerFactory.getLogger(clazz);
-    return new Logger(slf4jLogger, formatter, includeLoggerName);
-  }
+	public static Logger getLogger(Class<?> clazz) {
+		org.slf4j.Logger slf4jLogger = org.slf4j.LoggerFactory.getLogger(clazz);
+		return new Logger(slf4jLogger, dateKey, formatter, includeLoggerName);
+	}
 
-  public static void setDateFormatString(String dateFormatString) {
-    LoggerFactory.dateFormatString = dateFormatString;
-    LoggerFactory.formatter = FastDateFormat.getInstance(dateFormatString);
-  }
+	public static void setDateKey(String dateKey) {
+		LoggerFactory.dateKey = dateKey;
+	}
 
-  public static void setIncludeLoggerName(boolean includeLoggerName) {
-    LoggerFactory.includeLoggerName = includeLoggerName;
-  }
+	public static void setDateFormatString(String dateFormatString) {
+		LoggerFactory.dateFormatString = dateFormatString;
+		LoggerFactory.formatter = FastDateFormat.getInstance(dateFormatString);
+	}
+
+	public static void setIncludeLoggerName(boolean includeLoggerName) {
+		LoggerFactory.includeLoggerName = includeLoggerName;
+	}
 }
