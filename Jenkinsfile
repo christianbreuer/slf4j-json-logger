@@ -13,7 +13,7 @@ pipeline {
 				jdk "jdk"
 				maven "maven"
 			}
-			steps { sh "mvn clean deploy" }
+			steps { sh "mvn clean install" }
 			post {
 				failure {
 					script { currentBuild.result = 'FAILED'}
